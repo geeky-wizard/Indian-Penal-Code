@@ -1,0 +1,90 @@
+not(X) :- \+X.
+act(X)
+age(Person)<7 
+act(rape,Rohit)
+notAn
+
+%76
+notAnOffence(X,Person) :- act(X), illegal(X), believingBoundByLaw(X).
+
+notAnOffence(X,Person) :- act(X), illegal(X), boundByLaw(X).  
+
+%77
+notAnOffence(X,Person) :- act(X), doneByJudge(X), judicialAct(X)
+
+%78 - check
+
+offence(X,Person) :- act(X), violatesJudgement(X).
+
+%79
+% 
+
+notAnOffence(X,Person) :- act(X), legal(X).
+notAnOffence(X,Person) :- act(X), illegal(X), justifiedByOwnInterpretationOfLaw(X).
+
+%80 define accident
+
+notAnOffence(X,Person) :- act(X), accident(X), RequiredCautionTaken(X).
+
+%81
+
+notAnOffence(X,Person) :- act(X), likelyToCauseHarm(X), noCriminalIntent(X), preventHarm(X).
+
+%82  
+
+notAnOffence(X,Person) :- act(X), age(Person)<7.
+
+%83
+
+notAnOffence(X,Person) :- act(X), age(Person)>7 , age(Person)<12, immature(Person).
+
+%84
+
+notAnOffence(X,Person) :- act(X), unsoundMind(Person).
+
+%85 
+
+notAnOffence(X,Person) :- act(X), againstWillIntoxicated(Person)).
+
+%86
+
+offence(X,Person) :- act(X), intoxicated(Person), \+ againstWillIntoxicated(Person)).
+
+%87
+
+notAnOffence(X,Person) :- act(X), Consent(Victim,X) , noCriminalIntent(X).
+
+%88
+
+notAnOffence(X,Person) :- act(X), Consent(Victim,X), noCriminalIntent(X) , likelyToCauseHarm(X).
+
+%89 -------------------------------
+
+notAnOffence(X,Person) :- act(X), ( benefit(child,X); benefit(insane,X) ) ,  , 					\+likelyToCauseHarm(X), \+abetment(X).
+					
+%90
+
+~Consent(Person,X) :- age(Person)<12.
+~Consent(Person,X) :- unsoundMind(Person).
+~Consent(Person,X) :- underMisconception(Person).
+
+
+
+%91
+
+notAnOffence(X,Person) :- act(X),
+
+%92
+
+notAnOffence(X,Person) :- act(X),
+
+
+
+ 
+
+
+
+
+
+
+

@@ -1,0 +1,149 @@
+criminalObjective(xyz).
+joinAssembly(xyz,_).
+hasWeapon(xyz).
+commandedToDisperse(xyz).
+joinAssembly(_,xyz).
+continueInAssembly(xyz,_).
+violence(xyz).
+offenceDone(xyz,_).
+hire(xyz,abc,_).
+assaultPublicServant(xyz).
+provocationToCauseRiot(xyz).
+riotCommitted(xyz).
+promotingEnmity(xyz).
+inPlaceOfWorship(xyz).
+inProcessionOrMassDrill(xyz).
+assertionsPrejudicialToNationalIntegration(xyz).
+ownerOfLandWhereUnlawfulAssemblyHeld(xyz) .
+didNotInformPolice(xyz).
+harbouringUnlawfulAssembly(xyz).
+getsHiredInUnlawfulAssembly(xyz).
+fightInPublicPlace(xyz).
+
+
+
+%141 N is number of persons, O is objective, N is name of assembly
+
+unlawfulAssembly(Name,N,O) :- N>4, criminalObjective(O).
+ 
+
+%142
+% 	P is a member of Assembly Name
+%	(Definition of Predicate) 
+%	member(P, Name) is true if P,being aware of facts which render any assembly an unlawful assembly, intentionally joins that assembly, or continues in it.
+
+% member(P,Name) :- joinAssembly(P,Name).  
+% ^ Not necessary to include in the database !
+
+
+%143
+
+(prison(P,Months), Months=<6 ) ; fine(P, Rupees)  :-  member(P,Name), \+ hasWeapon(P).
+
+%144
+
+(prison(P,Months), Months=< 24 ) ; fine(P, Rupees) :- member(P,Name), hasWeapon(P).
+
+%145
+
+(prison(P,Months), Months=< 24 ) ; fine(P, Rupees) :- commandedToDisperse(Name), (joinAssembly(P,Name); continueInAssembly(P,Name)).
+
+%146 If violence is used by the assembly (as a whole or by any member other than P) OR by the member himself, it is an offence of Rioting and every member is guilty of this offence
+ 
+riot(P) :- ( violence(Name) ;violence(P)), member(P,Name).
+
+%147
+
+(prison(P,Months), Months=< 24 ) ; fine(P, Rupees) :- riot(P), \+ hasWeapon(P).
+
+%148
+
+(prison(P,Months), Months=< 36 ) ; fine(P, Rupees) :- riot(P), hasWeapon(P).
+
+%149 P is again person, O is the offence - ( O could be done by the assembly as a whole or by any other member or by P himself)
+
+guiltyOfOffence(P,O) :- member(P,Name), ( offenceDone(O,Name); offenceDone(O,P)).
+
+%150 ------referagain
+
+hire(P,A,Name) means person P hires person A in Name Unlawful Assembly
+
+%If P hires A, P himself is punishable as if he was a member of that assembly
+member(P,Name) :- hire(P,A,Name).
+
+%If P hires A and A indulges in offence O, P himself is punishable as if he was a member of that assembly and has done offence O
+member(P,Name), offenceDone(O,P) :- hire(P,A,Name), offenceDone(O,A).
+
+%If P hires A and A indulges in violence, P himself is punishable as if he was a member of that assembly and has done violence O
+member(P,Name), violence(P) :- hire(P,A,Name), violence(A).
+
+%151 - wrong - 
+% Could be unlawful assembly, or just a normal assembly which has been commanded to disperse. functor joinAssembly () can take the name of any type of assembly as its arguments
+
+assembly(Name,N) :- N>4
+(prison(P,Months), Months=< 6 ) ; fine(P, Rupees) :- commandedToDisperse(Name), (joinAssembly(P,Name); continueInAssembly(P,Name)).
+
+
+%152
+
+(prison(P,Months), Months=< 36 ) ; fine(P, Rupees) :- assaultPublicServant(P).
+
+%153
+
+(prison(P,Months), Months=< 12 ) ; fine(P, Rupees) :- provocationToCauseRiot(P), riotCommitted(Arg), Arg=1.
+
+(prison(P,Months), Months=< 6 ) ; fine(P, Rupees) :- provocationToCauseRiot(P), riotCommitted(Arg), Arg=0.
+
+%153A
+
+(prison(P,Months), Months=< 36 ) ; fine(P, Rupees) :- promotingEnmity(P), \+inPlaceOfWorship(P).
+(prison(P,Months), Months=< 60 ) ; fine(P, Rupees) :- promotingEnmity(P), inPlaceOfWorship(P).
+
+%153AA
+
+(prison(P,Months), Months=< 6 ) ; fine(P, Rupees) :- hasWeapon(P), inProcessionOrMassDrill(P).
+
+%153B
+
+(prison(P,Months), Months=< 36 ) ; fine(P, Rupees) :- assertionsPrejudicialToNationalIntegration(P), \+inPlaceOfWorship(P).
+(prison(P,Months), Months=< 60 ) ; fine(P, Rupees) :- assertionsPrejudicialToNationalIntegration(P), inPlaceOfWorship(P).
+
+%154
+
+fine(P, Rupees), Rupees<1000 :- ownerOfLandWhereUnlawfulAssemblyHeld(P), didNotInformPolice(P).
+
+%155 refer again
+
+
+%156 refer again
+
+%157
+
+(prison(P,Months), Months=< 6 ) ; fine(P, Rupees) :- harbouringUnlawfulAssembly(P)
+
+%158
+
+(prison(P,Months), Months=< 6 ) ; fine(P, Rupees) :- getsHiredInUnlawfulAssembly(P), \+hasWeapon(P).
+(prison(P,Months), Months=< 24 ) ; fine(P, Rupees) :-getsHiredInUnlawfulAssembly(P), hasWeapon(P).
+
+%159 
+ 
+affray(P) :- fightInPublicPlace(P).
+
+%160
+
+(prison(P,Months), Months=< 1 ) ; (fine(P, Rupees),Rupees=<100) :- affray(P).
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+

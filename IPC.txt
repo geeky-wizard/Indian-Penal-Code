@@ -1,0 +1,616 @@
+
+% IPC ChapterIV
+
+crime(xyz,abc).
+boundByLaw(abc).
+intent(xyz,_).
+lawMisinterpret(xyz).
+judge(xyz).
+actingJudicially(xyz).
+orderOfCourt(abc).
+cautious(xyz).
+age(xyz,_).
+immature(xyz).
+insane(xyz).
+intoxicated(xyz,_).
+consent(xyz,_).
+benefit(xyz,_).
+causeInjury(abc).
+causeDeath(abc).
+likelyToCauseHarm(abc).
+child(xyz).
+insane(xyz).
+benefit(xyz,_).
+selfDefense(xyz,_).
+danger(xyz,_).
+rape(xyz).
+kidnapping(xyz).
+gratifyingUnnaturalLust(xyz).
+acidAttack(xyz).
+guardian(xyz).
+causeSlightHarm(abc).
+assault(xyz,_).
+communication(abc).
+punishableByDeath(abc).
+underThreat(xyz).
+theft(xyz).
+houseBreak(xyz).
+arson(xyz).
+accident(abc).
+preventOtherHarm(xyz).
+abetment(xyz,_,nyc).
+
+
+
+
+%Case1
+crime(rohit,rape).
+age(rohit,5).
+intent(rohit,harm).
+intoxicated(rohit,willingly).
+
+%Case2
+crime(anirudh,slap).
+causeSlightHarm(slap).
+
+%Case3
+crime(vyom,murder).
+causeDeath(murder).
+selfDefense(vyom,body).
+
+
+innocent76A(P) :- crime(P,X), boundByLaw(X).
+innocent76B(P) :- crime(P,X), intent(P,noCriminalIntent), lawMisinterpret(P).
+
+innocent77(P) :- crime(P,X), judge(P), intent(P,noCriminalIntent), actingJudicially(P).
+
+innocent78(P) :- crime(P,X), intent(P,noCriminalIntent), orderOfCourt(X).
+
+innocent79(P) :- crime(P,X), intent(P,noCriminalIntent), lawMisinterpret(P).
+
+innocent80(P) :- crime(P,X), accident(X), intent(P,noCriminalIntent), cautious(P).
+
+innocent81(P) :- crime(P,X), intent(P,noCriminalIntent), likelyToCauseHarm(X) , preventOtherHarm(P).
+
+innocent82(P) :- crime(P,X), age(P,A), A<7.
+
+innocent83(P) :- crime(P,X), age(P,A), A>7, A<12, immature(P).
+
+innocent84(P) :- crime(P,X), insane(P).
+
+innocent85(P) :- crime(P,X), intoxicated(P,againstWill), intent(P,noCriminalIntent), \+causeDeath(X).
+
+%86 included in IPC85
+
+innocent87(P) :- crime(P,X), consent(P,V), \+likelyToCauseHarm(X), age(V,A), A>18, ( causeInjury(X); causeDeath(X) ).
+
+innocent88(P) :- crime(P,X), intent(P,noCriminalIntent), \+causeDeath(X), consent(P,V), benefit(P,V).
+
+%define child
+innocent89(P) :- crime(P,X), intent(P,noCriminalIntent), benefit(P,V), ( child(V);insane(V) ) ,
+					 \+( causeInjury(X); causeDeath(X) ) , \+abetment(_,X,P) , guardian(V), consent(P,V).
+
+%90
+consent(P,V) :- (\+child(V)); (\+insane(V)).
+
+%innocent91(P) :- redundant to IPC 87,88,89
+
+innocent92(P) :- crime(P,X), intent(P,noCriminalIntent), benefit(P,V), ( child(V);insane(V) ) ,
+				 \+( causeInjury(X); causeDeath(X) ) , \+abetment(_,X,P).
+
+innocent93(P) :- crime(P,X), communication(X), intent(P,noCriminalIntent),( causeInjury(X); causeDeath(X) ).
+
+innocent94(P) :- crime(P,X),\+causeDeath(X),\+punishableByDeath(X), underThreat(P).
+
+innocent95(P) :- crime(P,X), causeSlightHarm(X).
+
+%innocent96(P) :- redundant IPC97
+
+innocent97(P) :- crime(P,X), ( selfDefense(P,body); selfDefense(P,property) ) , \+causeDeath(X).
+
+% A is the person against whom selfDefense was needed
+innocent100(P) :- crime(P,X),selfDefense(P,body), causeDeath(X),
+					assault(P,A), ( causeDeath(A);rape(A);kidnapping(A);gratifyingUnnaturalLust(A);acidAttack(A) ).
+
+%innocent101(P) :- redundant(100)
+
+%innocent102(P) :- redundant( Since selfDefense predicate implies that the person was in danger ).
+
+innocent103(P) :- crime(P,X), selfDefense(P,property),danger(property,A),causeDeath(X).
+
+%innocent104(P) :- redundant( Case where death can be caused and cannot be caused under SelfDefense(99,100))
+
+%105 ( related to 103 )
+% Here A means danger to property by a Person 'A'
+danger(property,A) :- ( theft(A);houseBreak(A);causeDeath(A);arson(A) ).
+
+innocent106(P) :- crime(P,X),selfDefense(P,body), causeDeath(X), preventOtherHarm(P),
+					assault(P2,A), ( causeDeath(A);rape(A);kidnapping(A);gratifyingUnnaturalLust(A);acidAttack(A) ).
+
+
+innocent(P) :- (innocent76A(P);innocent76B(P);innocent77(P); innocent78(P);innocent79(P);innocent80(P);
+				innocent81(P);innocent82(P);innocent83(P); innocent84(P);innocent85(P);innocent87(P);innocent88(P);
+				innocent89(P);innocent92(P); innocent93(P);innocent94(P);innocent95(P);innocent97(P);innocent100(P);
+				innocent103(P);innocent106(P)),
+				format('~w is innocent',[P]).
+
+%~innocent(P) :- format('~w is guilty',[P]).
+
+
+% IPC ChapterV
+
+instigate(xyz,abc).
+conspiracyAct(xyz,abc).
+illegalAid(xyz,abc).
+consequence(abc,xyz).
+liable(xyz,abc).
+publicServant(xyz).
+
+%Case 4
+
+crime(munde,helpingTerrorists).
+abetment(terrorists,helpingTerrorists,munde).
+illegalAid(helpingTerrorists).
+likelyToCauseHarm(helpingTerrorists).
+causeDeath(helpingTerrorists).
+crime(terrorists,helpingTerrorists).
+
+
+% In abetment crime on P2, it's not necessary that P1(the one abetted) commits the crime.
+
+%107
+abetment(P1,X,P2) :- instigate(P1,P2); conspiracyAct(P2,X); illegalAid(P2,X).
+
+% guilty(P) :- abetment(X,P1,P).
+
+%108
+abettor(P) :- abetment(P1,X,P).
+
+%109
+
+punishment(P,X) :- abetment(P2,X,P),
+			format('~w has the same punishment as ~w',[P,P2]).
+
+%110
+
+punishment(P,X) :- abetment(P,X,P2),crime(P,X),
+			format('~w will have the punishment for commiting ~w even if he was abetted',[P,X]).
+
+%111
+
+abetment(P1,X,P2) :- instigate(P1,P2), crime(P1,Y), consequence(Y,X).
+
+% To check if a person(p1) was liable for a crime which he didn't directly instigate to the one abetted(P1).
+liable(P2,Y) :- abetment(P1,X,P2),crime(P1,Y).
+
+%112
+
+punishment(P,Y) :- liable(P,Y),
+			format('~w will be have the punishment for ~w',[P,Y]).
+
+%113 Redundant to IPC-112
+
+%114,115
+
+punishment(P,X) :- abetment(P2,X,P), crime(P2,X), causeDeath(X),
+			format('~w will be imprisoned for a term which may exceed 14 years or suffer Death Penalty for abetting crime ~w',[P,X]).
+
+% if crime wasn't commited but P abetted someone to commit the crime(X)
+punishment(P,X) :- abetment(P2,X,P), \+crime(P2,X), causeDeath(X),
+			format('~w will be imprisoned for a term which may exceed 7 years and also a fine for abetting crime ~w',[P,X]).
+
+%116 Redundant to IPC 115
+
+%117,118
+
+punishment(P,X) :- illegalAid(P,X), crime(P2,X),\+publicServant(P), \+causeDeath(X),
+			format('~w will be imprisoned for a term which may exceed 7 years and also a fine for abetting crime ~w',[P,X]).
+
+punishment(P,X) :- illegalAid(P,X), \+crime(P2,X),\+publicServant(P), \+causeDeath(X),
+			format('~w will be imprisoned for a term which may exceed 3 years and also a fine for abetting crime ~w',[P,X]).
+
+%119
+
+%if offence was commited
+punishment(P,X) :- publicServant(P), \+punishableByDeath(X), illegalAid(P,X), crime(P2,X),
+			format('~w will be imprisoned for a term which may extend to one-half of the longest term and also a fine for abetting crime ~w',[P,X]).
+
+%if offence is punishable by death
+punishment(P,X) :- publicServant(P), punishableByDeath(X), illegalAid(P,X), crime(P2,X),
+			format('~w will be imprisoned for a term which may extend to 10 years and also a fine for abetting crime ~w',[P,X]).
+
+%if offence wasn't commited
+punishment(P,X) :- publicServant(P), illegalAid(P,X),\+crime(P2,X),
+			format('~w will be imprisoned for a term which may extend to one-fourth of the longest term and also a fine for abetting crime ~w',[P,X]).
+
+%120 Redundant to IPC-118
+
+
+
+
+
+
+% IPC ChapterVI
+
+
+
+
+
+
+warAgainst(xyz,abc).
+abetingWarAgainst(xyz,abc).
+hasWeapon(xyz).
+intentToWageWar(xyz,abc).
+concealsInfo(xyz).
+assault(xyz,abc).
+sedition(xyz).
+asiaticAlliance(abc,xyz).
+depradation(xyz,abc). 
+alliance(xyz,abc).
+receiveWarProperty(xyz). 
+receiveDepredationProperty(xyz).
+publicServant(xyz).
+aidPoWToEscape(xyz).
+negligenceForPoWEscape(xyz).
+resistanceToRecaptureOfPOW(xyz).
+
+
+
+% Case5
+
+crime(mehta,plundering_Canada).
+depradation(mehta,canada).
+alliance(india,canada).
+
+
+
+
+% IPC ChapterVI
+
+
+
+%121
+guilty121(P,X) :- crime(P,X), ( warAgainst(P,india) ; abetingWarAgainst(P,india) ).
+punishment(P,X) :- guilty121(P,X),	
+			format('~w shall be punished with death, or imprisonment for life and shall also be liable to fine',[P]). 
+
+%122
+guilty122(P,X)  :- crime(P,X), hasWeapon(P), intentToWageWar(P,india).
+punishment(P,X) :- guilty122(P,X),	
+			format('~w shall be punished with imprisonment for life or imprisonment of either description for a term not exceeding ten years, and shall also be liable to fine',[P]).
+
+%123
+guilty123(P,X)  :- crime(P,X), concealsInfo(P), intentToWageWar(P,india).
+punishment(P,X) :- guilty123(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to ten years, and shall also be liable to fine.',[P]).
+
+%124
+guilty124(P,X) :- crime(P,X), (assault(P,president) ; assault(P,governor)).
+punishment(P,X) :- guilty124(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to seven years, and shall also be liable to fine.',[P]).
+
+%124A
+guilty124A(P,X) :- crime(P,X), sedition(P).
+punishment(P,X) :- guilty124A(P,X),	
+			format('~w shall be punished with imprisonment for life, to which fine may be added, or with imprisonment which may extend to three years, to which fine may be added, or with fine.',[P]).
+
+%125A 
+guilty125(P,X) :- crime(P,X), ( warAgainst(P,Country) ; abetingWarAgainst(P,Country) ), asiaticAlliance(india,Country).
+punishment(P,X) :- guilty125(P,X),	
+			format('~w shall be punished with imprisonment for life, to which fine may be added, or with imprisonment of either description for a term which may extend to seven years, to which fine may be added, or with fine.',[P]).
+
+%126 
+guilty126(P,X) :- crime(P,X), depradation(P,Country), alliance(india,Country).
+punishment(P,X) :- guilty126(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to seven years, and shall also be liable to fine and to forfeiture of any property used or intended to be used in committing such depredation, or acquired by such depredation.',[P]).
+
+%127
+guilty127(P,X) :- crime(P,X), ( receiveWarProperty(P) ; receiveDepredationProperty(P) ).
+punishment(P,X) :- guilty127(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to seven years, and shall also be liable to fine and to forfeiture of the property so received.',[P]).
+
+%128
+guilty128(P,X) :- crime(P,X), publicServant(P), aidPoWToEscape(P).
+punishment(P,X) :- guilty128(P,X),	
+			format('~w shall be punished with imprisonment for life, or imprisonment of either description for a term which may extend to ten years, and shall also be liable to fine.',[P]).
+
+%129
+guilty129(P,X) :- crime(P,X), publicServant(P), negligenceForPoWEscape(P).
+punishment(P,X) :- guilty129(P,X),	
+			format('~w shall be punished with simple imprisonment for a term which may extend to three years, and shall also be liable to fine.',[P]).
+
+%130
+guilty130(P,X) :- crime(P,X), \+publicServant(P), ( aidPoWToEscape(P) ; resistanceToRecaptureOfPOW(P) ).
+punishment(P,X) :- guilty130(P,X),	
+			format('~w shall be punished with imprisonment for life, or with imprisonment of either description for a term which may extend to ten years, and shall also be liable to fine.',[P]).
+
+
+
+
+ 
+% IPC ChapterVII
+
+
+
+
+seduceFromDuty(xyz,abc).
+defence(xyz).
+mutinyCommittedinConsequence(xyz).
+senior(xyz,abc). 
+assault(xyz,abc).
+assaultCommittedinConsequence(xyz,abc).
+harboursDesertingDefenceOfficer(xyz).
+masterOfVessel(xyz). 
+concealsDefenceOfficer(xyz).
+wearingGarb(xyz). 
+carryingToken(xyz).
+
+
+
+%131
+guilty131(P,X) :- crime(P,X), ( abetment(A,mutiny,P) ; seduceFromDuty(P, A) ), defence(A). 
+punishment(P,X) :- guilty131(P,X),	
+			format('~w shall be punished with imprisonment for life, or with imprisonment of either description for a term which may extend to ten years, and shall also be liable to fine.',[P]). 
+
+%132
+guilty132(P,X) :- crime(P,X), abetment(A,mutiny,P), mutinyCommittedinConsequence(A), defence(A).
+punishment(P,X) :- guilty132(P,X),	
+			format('~w shall be punished with death or with imprisonment for life, or imprisonment of either description for a term which may extend to ten years, and shall also be liable to fine.',[P]).
+
+%133
+guilty133(P,X) :- crime(P,X), abetment(A,assault,P), defence(A), senior(A,B), assault(A,B).
+punishment(P,X) :- guilty133(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to three years, and shall also be liable to fine.',[P]).
+
+%134
+guilty134(P,X) :- crime(P,X), abetment(A,assault,P), defence(A), senior(A,B), assaultCommittedinConsequence(A,B).
+punishment(P,X) :- guilty134(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to seven years, and shall also be liable to fine.',[P]).
+
+%135
+guilty135(P,X) :- crime(P,X), abetment(A,desertion,P), defence(A).
+punishment(P,X) :- guilty135(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to two years, or with fine, or with both.',[P]).
+
+%136
+guilty136(P,X) :- crime(P,X), harboursDesertingDefenceOfficer(P).
+punishment(P,X) :- guilty136(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to two years, or with fine or with both.',[P]).
+
+%137
+guilty137(P,X) :- crime(P,X), masterOfVessel(P), concealsDefenceOfficer(P).
+punishment(P,X) :- guilty137(P,X),	
+			format('~w shall be liable to a penalty not exceeding five hundred rupees',[P]).
+
+%138
+guilty138(P,X) :- crime(P,X), abetment(A,insubordination,P), defence(A).
+punishment(P,X) :- guilty138(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to six months, or with fine, or with both.',[P]).
+
+%139 refers to other Acts out of scope.
+
+%140
+guilty140(P,X) :- crime(P,X), ( wearingGarb(P) ; carryingToken(P) ). 
+punishment(P,X) :- guilty140(P,X),	
+			format('~w shall be punished with imprisonment of either description for a term which may extend to three months, or with fine which may extend to five hundred rupees, or with both.',[P]).
+
+
+
+
+
+
+
+% IPC Chapter VIII - OFFENCES AGAINST THE PUBLIC TRANQUILITY.
+
+
+
+
+
+criminalObjective(xyz).
+joinAssembly(xyz,abc).
+hasWeapon(xyz).
+commandedToDisperse(xyz).
+joinAssembly(abc,xyz).
+continueInAssembly(xyz,abc).
+violence(xyz).
+offenceDone(xyz,abc).
+hire(xyz,abc,nyc).
+assaultPublicServant(xyz).
+provocationToCauseRiot(xyz).
+riotCommitted(xyz).
+promotingEnmity(xyz).
+inPlaceOfWorship(xyz).
+inProcessionOrMassDrill(xyz).
+assertionsPrejudicialToNationalIntegration(xyz).
+ownerOfLandWhereUnlawfulAssemblyHeld(xyz) .
+didNotInformPolice(xyz).
+harbouringUnlawfulAssembly(xyz).
+getsHiredInUnlawfulAssembly(xyz).
+fightInPublicPlace(xyz).
+commandedToDisperseA(xyz).
+joinAssemblyA(xyz,abc).
+continueInAssemblyA(xyz,abc).
+benefitOfPerson(xyz).
+
+%Case 6
+
+member(jeet,assembly1).
+violence(jeet).
+hasWeapon(jeet).
+
+% Input : punishnment(P,X,Name).
+
+
+%141 N is number of persons, O is objective, N is name of assembly
+
+unlawfulAssembly(Name,N,O) :- N>4, criminalObjective(O).
+
+
+%142
+%	P is a member of Assembly Name
+%	(Definition of Predicate)
+%	member(P, Name) is true if P,being aware of facts which render any assembly an unlawful assembly, intentionally joins that assembly, or continues in it.
+
+% member(P,Name) :- joinAssembly(P,Name).
+% ^ Not necessary to include in the database !
+
+
+%143
+
+punishment(P,X,Name)  :-  member(P,Name), \+ hasWeapon(P), \+(violence(Name) ;violence(P)),
+				format('~w will be imprisoned for a term which may extend to 6 months or be charged with a fine or both',[P]).
+%144
+
+punishment(P,X,Name) :- member(P,Name), hasWeapon(P), \+( violence(Name) ;violence(P) ),
+				format('~w will be imprisoned for a term which may extend to 24 months or be charged with a fine or both',[P]).
+%145
+
+punishment(P,X,Name) :- commandedToDisperse(Name), (joinAssembly(P,Name); continueInAssembly(P,Name)),
+				format('~w will be imprisoned for a term which may extend to 24 months or be charged with a fine or both',[P]).
+
+%146 If violence is used by the assembly (as a whole or by any member other than P) OR by the member himself, it is an offence of Rioting and every member is guilty of this offence
+
+riot(P) :- ( violence(Name) ;violence(P)), member(P,Name).
+
+%147
+
+punishment(P,X,Name) :- riot(P), \+ hasWeapon(P),
+				format('~w will be imprisoned for a term which may extend to 24 months or be charged with a fine or both',[P]).
+%148
+
+punishment(P,X,Name) :- riot(P), hasWeapon(P),
+				format('~w will be imprisoned for a term which may extend to 36 months or be charged with a fine or both',[P]).
+
+%149 P is again person, X is the offence - ( X could be done by the assembly as a whole or by any other member or by P himself)
+
+punishment(P,X) :- member(P,Name), ( offenceDone(X,Name); offenceDone(X,P)),
+			format('~w will be guilty of committing offence ~w',[P,X]).
+
+
+%150 
+
+%hire(P,A,Name) means person P hires person A in Name Unlawful Assembly
+%hire will be given as a fact.
+
+%If P hires A, P himself is punishable as if he was a member of that assembly
+%member(P,Name) :- hire(P,A,Name).
+%format('~w will be punishable as if he was the member of ~w unlawful assembly. If ~w has committed an offence, then ~w will be punishable as he himself has committed an offence under the unlawful assembly.',[P,Name,A,P]).
+
+%151
+
+% Could be unlawful assembly, or just a normal assembly which has been commanded to disperse. functor joinAssembly () can take the name of any type of assembly as its arguments
+
+%assembly(Name,N) :- N>4.
+punishment(P,X) :- commandedToDisperseA(Name), (joinAssemblyA(P,Name); continueInAssemblyA(P,Name)),
+				format('~w will be imprisoned for a term which may extend to 6 months or be charged with a fine or both',[P]).
+
+
+%152
+
+punishment(P,X) :- assaultPublicServant(P),
+				format('~w will be imprisoned for a term which may extend to 36 months or be charged with a fine or both',[P]).
+
+%153
+
+punishment(P,X) :- provocationToCauseRiot(P), riotCommitted(P),
+				format('~w will be imprisoned for a term which may extend to 12 months or be charged with a fine or both',[P]).
+
+
+punishment(P,X) :- provocationToCauseRiot(P), \+riotCommitted(P),
+				format('~w will be imprisoned for a term which may extend to 6 months or be charged with a fine or both',[P]).
+
+
+%153A
+
+punishment(P,X) :- promotingEnmity(P), \+inPlaceOfWorship(P),
+				format('~w will be imprisoned for a term which may extend to 36 months or be charged with a fine or both',[P]).
+
+
+punishment(P,X) :- promotingEnmity(P), inPlaceOfWorship(P),
+				format('~w will be imprisoned for a term which may extend to 60 months or be charged with a fine or both',[P]).
+
+%153AA
+
+punishment(P,X) :- hasWeapon(P), inProcessionOrMassDrill(P),
+				format('~w will be imprisoned for a term which may extend to 6 months or be charged with a fine(<2000) or both',[P]).
+
+%153B
+
+punishment(P,X) :- assertionsPrejudicialToNationalIntegration(P), \+inPlaceOfWorship(P),
+				format('~w will be imprisoned for a term which may extend to 36 months or be charged with a fine or both',[P]).
+
+
+punishment(P,X) :- assertionsPrejudicialToNationalIntegration(P), inPlaceOfWorship(P),
+				format('~w will be imprisoned for a term which may extend to 60 months or be charged with a fine or both',[P]).
+
+
+%154
+
+punishment(P,X) :- ownerOfLandWhereUnlawfulAssemblyHeld(P), didNotInformPolice(P),
+				format('~w will be charged with a fine(<1000)',[P]).
+
+%155 
+punishment(P,X) :- benefitOfPerson(P), 
+				format('~w will be charged with fine',[P]).
+
+
+
+%156
+punishment(P,X):- benefitOfPerson(P), harbouringUnlawfulAssembly(P), 
+				format('~w will be charged with fine',[P]).
+
+%157
+
+punishment(P,X) :- harbouringUnlawfulAssembly(P),
+				format('~w will be imprisoned for a term which may extend to 6 months or be charged with a fine or both',[P]).
+%158
+
+punishment(P,X) :- getsHiredInUnlawfulAssembly(P), \+hasWeapon(P),
+				format('~w will be imprisoned for a term which may extend to 6 months or be charged with a fine or both',[P]).
+
+punishment(P,X) :-getsHiredInUnlawfulAssembly(P), hasWeapon(P),
+				format('~w will be imprisoned for a term which may extend to 24 months or be charged with a fine or both',[P]).
+%159
+
+affray(P) :- fightInPublicPlace(P).
+
+%160
+
+punishment(P,X) :- affray(P),
+				format('~w will be imprisoned for a month or be charged with a fine(upto 100) or both',[P]).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
